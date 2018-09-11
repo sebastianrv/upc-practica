@@ -1,0 +1,197 @@
+// 4.A.cpp: archivo de proyecto principal.
+
+#include "stdafx.h"
+#include "funciones.h"
+#include "ArregloContacto.h"
+#include <iostream>
+#include <conio.h>
+#include "stdio.h"
+
+using namespace System;
+using namespace std;
+
+
+int main()
+{
+    //variable
+	//desde el main se va mandar datos al arreglo
+	int op;
+	char *nombreContacto = new char[20]; //para el nombre
+	int edadContacto; //para la edad
+	//definicion objetos
+	Contacto *objContacto;//arreglo de objetos de la clase Contacto
+	ArregloContacto *objArregloContacto; //arreglo de objetos de la clase ArregloContacto
+    //instanciar el objeto - objArregloContacto
+	objArregloContacto = new ArregloContacto();
+	
+	while (1) {
+		Console::Clear();
+		op = Menu();
+		if (op == 1) //Mostrar el arreglo
+		{
+			if (objArregloContacto->getN() > 0)//verificar si el arreglo tiene datos
+			{
+				cout << "NOMBRE\T\T EDAD\n";
+				for (int i = 0; i <objArregloContacto->getN(); i++)
+				{
+					//obtener el contacto
+					objContacto = objArregloContacto->getContacto(i);
+					cout << objContacto->getNombre() << " \t " << objContacto->getEdad();
+					cout << endl;
+				}
+				_getch();
+			}
+			else
+				cout << "\n El arreglo no tiene datos...";
+		}
+
+		if (op == 2)
+		{
+			objContacto = new Contacto();
+			cout << "\n NUEVO CONTACTO \n";
+			cin.ignore();//ignorar cualquier caracter que nos provoque un error al momento del ingreso de dato
+			cout << " Ingrese nombre: "; cin.getline(nombreContacto, 20);
+			cout << " Ingrese edad: "; cin >> edadContacto;
+			//Enviamos los datos al objetoContacto
+			objContacto->setNombre(nombreContacto);
+			objContacto->setEdad(edadContacto);
+			//Agregamos el objContacto al arreglo
+			objArregloContacto->AgregarContacto(objContacto);
+			_getch();
+		}
+		_getch();
+	}
+	return 0;
+}
+///////////////////////////////////////
+ArregloContacto.h
+//////////////////////////////////////
+#pragma once
+#include "Contacto.h"
+
+class ArregloContacto
+{
+private:
+	Contacto **arregloContacto; //variable de doble puntero
+	int *N;						//tamaño de arreglo
+public:
+	ArregloContacto(void);
+	~ArregloContacto(void);
+	void AgregarContacto(Contacto *dato); // metodo de agregar contacto
+	Contacto *getContacto(int indice);// obtener contacto, cual es el indice que quiero obtener 
+	int getN(); // para obtener el valor actual del tamaño del arreglo mediante puntero *N
+};
+ArregloContacto::ArregloContacto(void)
+{
+	arregloContacto = NULL;
+	N = new int;
+	*N = 0;
+}
+ArregloContacto::~ArregloContacto(void)
+{
+	for (int i = 0; i < *N; i++)
+		delete arregloContacto[i];
+	delete N;
+}
+void ArregloContacto::AgregarContacto(Contacto *dato)
+{
+	Contacto **Aux; //arreglo temporal
+	Aux = new Contacto*[*N + 1];
+	if (Aux != NULL) //si se pudo crear el arreglo aux, quiere decir que tiene elementos o apunta algo
+	{
+		for (int i = 0; i < *N; i++)
+		{
+			Aux[i] = arregloContacto[i];
+		}
+		Aux[*N] = dato;
+		*N = *N + 1; //tamaño del arreglo
+
+		if (arregloContacto != NULL)// si el arreglo contacto tiene datos lo voy a borrar
+			delete arregloContacto;
+		arregloContacto = Aux;
+	}
+}
+Contacto* ArregloContacto::getContacto(int indice)
+{
+	return arregloContacto[indice];
+}
+int ArregloContacto::getN()
+{
+	return *N;
+}
+
+
+///////////////////////////////////////
+Contacto.h
+//////////////////////////////////////
+#pragma once
+#include "string.h"
+
+using namespace System;
+using namespace std;
+
+class Contacto
+{
+private:
+	char *nombre;
+	int Edad;
+public:
+	Contacto();
+	~Contacto();
+	void setNombre(char *new_nombre);
+	char *getNombre();
+	void setEdad(int new_Edad);
+	int getEdad();
+
+};
+//Implementacion de la clase
+Contacto::Contacto() //cosntrtuctor
+{
+	Edad = 0;
+	nombre = new char[100];
+}
+Contacto::~Contacto() //destrtuctor
+{
+	delete []nombre;
+}
+//----------------------------------
+void Contacto::setEdad(int new_Edad)
+{
+	this->Edad=new_Edad;
+}
+int Contacto::getEdad()
+{
+	return Edad;
+}
+void Contacto::setNombre(char *new_nombre)
+{
+	strcpy(nombre, new_nombre);//permite copiar una cadena a otra cadena
+}
+char *Contacto::getNombre()
+{
+	return nombre;
+}
+
+///////////////////////////////////////
+Funciones.h
+//////////////////////////////////////
+#pragma once
+#include <iostream>
+
+using namespace System;
+using namespace std;
+
+int Menu()
+{
+	int opcion;
+
+	do
+	{
+		cout << " MENU" << endl;
+		cout << "1- Mostrar Contactos" << endl;
+		cout << "2- Agregar Contactos" << endl << endl;
+		cout << " INGRESE UNA OPCION: "; cin >> opcion;
+	} while (opcion < 1 || opcion > 2);
+
+	return opcion;
+}

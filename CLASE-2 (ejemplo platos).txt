@@ -1,0 +1,240 @@
+// 2.A.cpp: archivo de proyecto principal.
+
+#include "stdafx.h"
+#include "Funciones.h"
+#include "ArregloPlato.h"
+#include "stdio.h"
+
+int main() {
+	int Opcion_Menu;
+	char *NombrePlato = new char[100];
+	int CondicionDelPlato;
+	bool Picante_O_No;
+	int CaloriasPlato;
+	double PrecioPlato;
+	Plato *objPlato;
+	ArregloPlato *objArregloPlato;
+	objArregloPlato = new ArregloPlato();
+	while (true) {
+		Console::Clear();
+		Opcion_Menu = Menu_Opciones();
+		if (Opcion_Menu == 1) {
+			if (objArregloPlato->GetN() > 0) objArregloPlato->Mostrar_Platos();
+			else cout << "\n El arreglo no posee datos ... ";
+		}
+		if (Opcion_Menu == 2) {
+			objPlato = new Plato();
+			cout << "\n NUEVO PLATO: \n";
+			cin.ignore();
+			cout << " Ingrese el nombre: "; cin.getline(NombrePlato, 30);
+			cout << " Condicion (1: Frio, 2: Caliente): "; cin >> CondicionDelPlato;
+			cout << " Picante (1: Si, 0: No): "; cin >> Picante_O_No;
+			cout << " Cantidad de calorias: "; cin >> CaloriasPlato;
+			cout << " Ingrese el precio promedio: "; cin >> PrecioPlato;
+			objPlato->SetNombre(NombrePlato);
+			objPlato->SetCondicion(CondicionDelPlato);
+			objPlato->SetPicante(Picante_O_No);
+			objPlato->SetCalorias(CaloriasPlato);
+			objPlato->SetPrecio(PrecioPlato);
+			objArregloPlato->Agregar_Plato(objPlato);
+		}
+		if (Opcion_Menu == 3) {
+			if (objArregloPlato->GetN() > 0) {
+				int pos;
+				cout << "\n Ingrese posicion a eliminar: "; cin >> pos;
+				objArregloPlato->Eliminar_Plato(pos);
+			}
+			else cout << "\n No existe arreglo para realizar esta accion ... ";
+		}
+		if (Opcion_Menu == 4) {
+			if (objArregloPlato->GetN() > 0) objArregloPlato->Reporte_De_Platos_Picantes();
+			else cout << "\n No existe arreglo para realizar esta accion ... ";
+		}
+		if (Opcion_Menu == 5) {
+			if (objArregloPlato->GetN() > 0) objArregloPlato->Platos_Mayor_A_Cien_Soles();
+			else cout << "\n No existe arreglo para realizar esta accion ... ";
+		}
+		cin.ignore();
+		cin.get();
+	}
+	return 0;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+Plato.h
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma once
+#include "string.h"
+
+class Plato {
+private:
+	char *Nombre;
+	int Condicion;
+	bool Picante;
+	int Calorias;
+	double Precio;
+public:
+	Plato(void);
+	~Plato(void);
+	void SetNombre(char *nuevo_nombre);
+	char *GetNombre();
+	void SetCondicion(int nueva_condicion);
+	int GetCondicion();
+	void SetPicante(bool nuevo_plato);
+	bool GetPicante();
+	void SetCalorias(int nueva_cantidad);
+	int GetCalorias();
+	void SetPrecio(double nuevo_promedio);
+	double GetPrecio();
+};
+
+Plato::Plato(void) {
+	this->Nombre = new char[100];
+	this->Condicion = 0;
+	this->Picante = 0;
+	this->Calorias = 0;
+	this->Precio = 0.0;
+}
+
+Plato::~Plato(void) { delete[]Nombre; }
+
+void Plato::SetNombre(char *nuevo_nombre) { strcpy(Nombre, nuevo_nombre); }
+
+char *Plato::GetNombre() { return Nombre; }
+
+void Plato::SetCondicion(int nueva_condicion) { this->Condicion = nueva_condicion; }
+
+int Plato::GetCondicion() { return Condicion; }
+
+void Plato::SetPicante(bool nuevo_plato) { this->Picante = nuevo_plato; }
+
+bool Plato::GetPicante() { return Picante; }
+
+void Plato::SetCalorias(int nueva_cantidad) { this->Calorias = nueva_cantidad; }
+
+int Plato::GetCalorias() { return Calorias; }
+
+void Plato::SetPrecio(double nuevo_promedio) { this->Precio = nuevo_promedio; }
+
+double Plato::GetPrecio() { return Precio; }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+ArregloPlato.h
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma once
+#include "Plato.h"
+
+class ArregloPlato {
+private:
+	Plato * *arregloPlato;
+	int *N;
+	int posicion;
+public:
+	ArregloPlato(void);
+	~ArregloPlato(void);
+	void Agregar_Plato(Plato *dato);
+	void Eliminar_Plato(int posicion);
+	Plato *GetArregloPlato(int indice);
+	void Imprimir(int indice);
+	void Mostrar_Platos();
+	void Reporte_De_Platos_Picantes();
+	void Platos_Mayor_A_Cien_Soles();
+	int GetN();
+};
+
+ArregloPlato::ArregloPlato(void) {
+	arregloPlato = NULL;
+	N = new int;
+	*N = 0;
+}
+
+ArregloPlato::~ArregloPlato(void) {
+	for (int i = 0; i < *N; i++) {
+		delete arregloPlato[i];
+	}
+	delete N;
+}
+
+void ArregloPlato::Agregar_Plato(Plato *dato) {
+	Plato **temp;
+	temp = new Plato*[*N + 1];
+	if (temp != NULL) {
+		for (int i = 0; i < *N; i++) {
+			temp[i] = arregloPlato[i];
+		}
+		temp[*N] = dato;
+		*N = *N + 1;
+		if (arregloPlato != NULL) delete arregloPlato;
+		arregloPlato = temp;
+	}
+}
+
+void ArregloPlato::Eliminar_Plato(int posicion) {
+	Plato **temp;
+	temp = new Plato*[*N - 1];
+	if (temp != NULL) {
+		for (int i = 0, k = 0; i < *N; i++) {
+			if (i != posicion) {
+				temp[k] = arregloPlato[i];
+				k++;
+			}
+		}
+		*N = *N - 1;
+		if (arregloPlato != NULL) delete arregloPlato;
+		arregloPlato = temp;
+	}
+}
+
+Plato *ArregloPlato::GetArregloPlato(int indice) { return arregloPlato[indice]; }
+
+void ArregloPlato::Imprimir(int indice) {
+	cout << "\n > Plato (" << indice << "): " << GetArregloPlato(indice)->GetNombre();
+	cout << "\n > Condicion (" << indice << "): " << GetArregloPlato(indice)->GetCondicion();
+	cout << "\n > Picante o no (" << indice << "): " << GetArregloPlato(indice)->GetPicante();
+	cout << "\n > Cantidad de calorias (" << indice << "): " << GetArregloPlato(indice)->GetCalorias();
+	cout << "\n > Precio promedio (" << indice << "): " << GetArregloPlato(indice)->GetPrecio() << endl;
+}
+
+void ArregloPlato::Mostrar_Platos() {
+	for (int i = 0; i < *N; i++) Imprimir(i);
+}
+
+void ArregloPlato::Reporte_De_Platos_Picantes() {
+	for (int i = 0; i < *N; i++) {
+		if (arregloPlato[i]->GetPicante() == true) Imprimir(i);
+	}
+}
+
+void ArregloPlato::Platos_Mayor_A_Cien_Soles() {
+	for (int i = 0; i < *N; i++) {
+		if (arregloPlato[i]->GetPrecio() > 100.0) Imprimir(i);
+	}
+}
+
+int ArregloPlato::GetN() { return *N; }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+Funciones.h
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma once
+#include "iostream"
+using namespace std;
+using namespace System;
+
+int Menu_Opciones()
+{
+	int op;
+
+	do
+	{
+		cout << "\n MENU DE OPCIONES: ";
+		cout << "\n -------------------------------------------------------------------- ";
+		cout << "\n 1. Mostrar arreglo de Platos ";
+		cout << "\n 2. Agregar arreglo ";
+		cout << "\n 3. Eliminar arreglo ";
+		cout << "\n 4. Reporte de Platos Picantes ";
+		cout << "\n 5. Reporte de Platos Mas Caros " << endl << endl;
+		cout << " Ingrese la opcion: "; cin >> op;
+	} while ((op < 1) || (op > 5));
+
+	return op;
+}

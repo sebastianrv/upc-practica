@@ -1,0 +1,68 @@
+// ejercicio memoria Dinamica.cpp: archivo de proyecto principal.
+
+#include "stdafx.h"
+#include <iostream>
+#include <conio.h>
+
+using namespace System;
+using namespace std;
+
+void generar_arreglo(int *arreglo, int *N)
+{
+	Random r;
+	for (int i = 0; i < *N; i++)
+	{
+		arreglo[i] = r.Next(1, 101);
+	}
+	_getch();
+}
+void listar_arreglo(int *arreglo, int *N)
+{
+	if (arreglo != NULL)
+	{
+		for (int i = 0; i < *N; i++)
+		{
+			cout << "\n" << arreglo[i];
+		}
+	}
+	else
+		cout << "\n el arreglo esta vacio....";
+	_getch();
+}
+
+
+int menu()
+{
+	int opc;
+	do
+	{
+	cout << "INGRESE LA OPCION"<<endl;
+	cout << "1) Listar arreglos" << endl;
+	cout << "2) Buscar mayor " << endl;
+	cout << "3)	Buscar menor" << endl;
+	} while (opc <1 || opc >3);
+
+	return opc;
+}
+int main()
+{
+	int opcion_menu;
+	int *arreglo = NULL;
+	
+	int *N = new int;
+	
+	while (1)
+	{
+		Console::Clear();
+		opcion_menu = menu();
+		if (opcion_menu == 1)
+		{
+			listar_arreglo(arreglo, N);
+		}
+		_getch();
+		cout << "\nPresione una tecla para continuar";
+	}
+
+	_getch();
+	return 0;
+}

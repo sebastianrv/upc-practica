@@ -1,0 +1,67 @@
+// 3.A.cpp: archivo de proyecto principal.
+#include "stdafx.h"
+#include <iostream>
+#include <cmath>
+#include <conio.h>
+
+using namespace System;
+using namespace std;
+
+class Esfera		//defino la clase
+{
+private:
+	int radio;		//¿que atributos tiene la clase?
+public:
+	Esfera();		//indicar el constructor
+	~Esfera();		//indicar el destructor
+	double Area();	//funcion para calcular el area
+	double Volumen(); //funcion para calcular el volumen
+	void setRadio(int valor);	//asignar a l Radio un valor
+	int getRadio();				//Obtener el Radio
+};
+	//implementa clase 
+Esfera::Esfera()
+{
+	radio = 0;
+}
+Esfera::~Esfera()
+{
+
+}
+void Esfera::setRadio(int valor)
+{
+	radio = valor;
+	//this->radio = valor;
+	//(*this).radio = valor;
+}
+int Esfera::getRadio()
+{
+	return this->radio;
+}
+double Esfera::Area()
+{
+	double a;
+	a = (4 * 3.1415*(pow(radio, 2)));
+	return a;
+}
+double Esfera::Volumen()
+{
+	double v;
+	v = (4 / (3 * 1.0))*3.1415*(pow(radio, 3));
+	return v;
+}
+int main()
+{
+	Esfera *obj1;
+	obj1 = new Esfera();
+	int r;
+	cout << "Ingrese radio: "; 
+	cin >> r;
+	obj1->setRadio(r);
+	cout << "\n El radio ingresado es: " << obj1->getRadio();
+	cout << "\n El area es: " << obj1->Area();
+	cout << "\n El volumen es: " << obj1->Volumen();
+
+	_getch();
+	return 0;
+}
